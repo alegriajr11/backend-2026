@@ -8,9 +8,12 @@ import { InventarioModule } from './inventario/inventario.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { CategoriaModule } from './categoria/categoria.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductoEntity } from './productos/entities/producto.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([ProductoEntity]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

@@ -6,17 +6,12 @@ export class ProductosController {
     constructor(private readonly productosService: ProductosService) { }
 
     @Get()
-    findAll() {
-        return this.productosService.findAll();
-    }
-
-    @Get(':id')
-    getProductById(@Param('id', ParseIntPipe) id: number) {
-        return this.productosService.findOne(id);
+    async findAll() {
+        return await this.productosService.findAll();
     }
 
     @Post()
-    createProduct(@Body() product: { name: string, price: number }) {
-        return this.productosService.create(product);
+    async create(@Body() createProductDto) {
+        return await this.productosService.create(createProductDto);
     }
 }

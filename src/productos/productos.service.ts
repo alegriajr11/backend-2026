@@ -1,35 +1,42 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductoEntity } from './entities/producto.entity';
+import { Repository } from 'typeorm';
+import { CreateCategoriaDto } from 'src/categoria/dto/create-categoria.dto';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductosService {
+    constructor(
+        @InjectRepository(ProductoEntity)
+        private readonly productoRepository: Repository<ProductoEntity>,
+    ) { }
 
-    private products = [
-        {
-            id: 1,
-            name: 'Producto 1',
-            price: 100,
-        },
-        {
-            id: 2,
-            name: 'Producto 2',
-            price: 200,
+
+    async findAll(): Promise<ProductoEntity[]> {
+        const productos =  await this.productoRepository.find({ relations: ['categorias'] });
+        return productos;
+    }
+
+    async findOne(id: number): Promise<ProductoEntity> {
+        const producto = await this.productoRepository.findOne(
+            {
+                where: { id },
+                relations: ['categorias'],
+            }
+        );
+        if (!producto) {
+            throw new NotFoundException(`Producto con ID ${id} no encontrado`);
         }
-    ];
-
-    //Encontrar todos los productos
-    findAll() {
-        return this.products;
+        return producto;
     }
 
-    findOne(id_producto: number) {
-        const product = this.products.find(p => p.id === id_producto)
-        if (!product) throw new NotFoundException('Producto no encontrado');
-        return product;
-    }
-
-    create(product: { name: string, price: number }) {
-        const newProduct = { id: this.products.length + 1, ...product };
-        this.products.push(newProduct);
-        return 'Producto creado exitosamente';
+    async create(createProductDto: CreateProductDto): Promise<ProductoEntity> {
+        const producto = this.productoRepository.create({
+            nombre: createProductDto.nombre,
+            precio: createProductDto.precio,
+            categoriaId: createProductDto.categoriaId,
+        });
+        return await this.productoRepository.save(producto);
     }
 }
