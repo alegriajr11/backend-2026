@@ -7,6 +7,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { InventarioModule } from './inventario/inventario.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { CategoriaModule } from './categoria/categoria.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    ProductosModule, UsuariosModule, InventarioModule, DatabaseModule],
+    ProductosModule, UsuariosModule, InventarioModule, DatabaseModule, CategoriaModule],
   controllers: [AppController],
   providers: [AppService, ProductosService],
 })
