@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductoEntity } from './entities/producto.entity';
 import { Repository } from 'typeorm';
-import { CreateCategoriaDto } from 'src/categoria/dto/create-categoria.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class ProductosService {
 
 
     async findAll(): Promise<ProductoEntity[]> {
-        const productos =  await this.productoRepository.find({ relations: ['categorias'] });
+        const productos = await this.productoRepository.find({ relations: ['categorias'] });
         return productos;
     }
 
@@ -38,5 +37,32 @@ export class ProductosService {
             categoriaId: createProductDto.categoriaId,
         });
         return await this.productoRepository.save(producto);
+    }
+
+    async findWhitPagination(page: number, limit: number): Promise<ProductoEntity[]> {
+        const productos = await this.productoRepository.find({
+            skip: (page - 1) * limit,
+            take: limit,
+            order: { nombre: 'ASC' },
+            relations: ['categorias'],
+        });
+        return productos;
+    }
+
+    async searchByName(name: string): Promise<ProductoEntity[]> {
+        const productos = await this.productoRepository
+            .createQueryBuilder('producto')
+            .where('LOWER(producto.nombre) LIKE :name', { name: `%${name.toLowerCase()}%` })
+            .leftJoinAndSelect('producto.categorias', 'categoria')
+            .getMany();
+        return productos;
+    }
+
+    async searchv2ByName(name: string): Promise<ProductoEntity[]> {
+        const productos = await this.productoRepository.find({
+            where: { nombre: name },
+            relations: ['categorias'],
+        });
+        return productos;
     }
 }

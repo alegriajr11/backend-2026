@@ -10,6 +10,8 @@ import { ConfigModule } from '@nestjs/config';
 import { CategoriaModule } from './categoria/categoria.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductoEntity } from './productos/entities/producto.entity';
+import { UsuarioModule } from './modules/usuario/usuario.module';
+import { RolModule } from './modules/rol/rol.module';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { ProductoEntity } from './productos/entities/producto.entity';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    ProductosModule, UsuariosModule, InventarioModule, DatabaseModule, CategoriaModule],
+    ProductosModule, UsuariosModule, InventarioModule, DatabaseModule, CategoriaModule, UsuarioModule, RolModule],
   controllers: [AppController],
   providers: [AppService, ProductosService],
 })
