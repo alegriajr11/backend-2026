@@ -1,5 +1,6 @@
 import { CategoriaEntity } from "src/categoria/entities/categoria.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { InventarioEntity } from "src/inventario/entities/inventario.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({name: 'productos'})
 export class ProductoEntity {
@@ -25,4 +26,7 @@ export class ProductoEntity {
     @ManyToOne(() => CategoriaEntity, (categoria) => categoria.productos)
     @JoinColumn({ name: 'categoria_id' })
     categorias: CategoriaEntity
+
+    @OneToOne(() => InventarioEntity, (inventario) => inventario.producto, { cascade: true })
+    inventario: InventarioEntity
 }

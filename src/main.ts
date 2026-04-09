@@ -1,20 +1,33 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  //Habilitar Validación global
+  // Habilitar validación global
   app.useGlobalPipes(
     new ValidationPipe(
       {
-        whitelist: true, // Elimina propiedades no definidas en el DTO
-        forbidNonWhitelisted: true, // Lanza un error si se envían propiedades no definidas
-        transform: true, // Transforma los tipos de datos según lo definido en el DTO
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
       }
     )
   );
+  // Habilitar ClassSerializerInterceptor para excluir datos sensibles
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
+
+  const config = new DocumentBuilder()
+    .setTitle('API Backend2026')
+    .setDescription('Documentación Swagger para estudiantes (productos, categorías, inventario)')
+    .setVersion('1.0')
+    .addTag('productos')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }

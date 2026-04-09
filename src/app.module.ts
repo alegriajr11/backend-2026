@@ -12,15 +12,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductoEntity } from './productos/entities/producto.entity';
 import { UsuarioModule } from './modules/usuario/usuario.module';
 import { RolModule } from './modules/rol/rol.module';
+import { AuthModule } from './auth/auth.module';
+import { UserEntity } from './usuarios/entities/usuario.entity';
+import { RoleEntity } from './modules/rol/entities/role.entitity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProductoEntity]),
+    TypeOrmModule.forFeature([ProductoEntity, UserEntity, RoleEntity]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
-    ProductosModule, UsuariosModule, InventarioModule, DatabaseModule, CategoriaModule, UsuarioModule, RolModule],
+    ProductosModule, 
+    UsuariosModule, 
+    InventarioModule, 
+    DatabaseModule, 
+    CategoriaModule, 
+    UsuarioModule, 
+    RolModule, 
+    AuthModule],
   controllers: [AppController],
   providers: [AppService, ProductosService],
 })
